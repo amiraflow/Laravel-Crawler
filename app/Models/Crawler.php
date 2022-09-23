@@ -9,5 +9,5 @@ class Crawler extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['url', 'status', 'path'];
+    protected $fillable = ['url', 'status', 'path', 'source'];
 }

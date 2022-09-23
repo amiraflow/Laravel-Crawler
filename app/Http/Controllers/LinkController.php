@@ -7,7 +7,9 @@ use Spatie\Crawler\Crawler;
 use Illuminate\Http\Request;
 use GuzzleHttp\RequestOptions;
 use App\Http\Controllers\Controller;
+use App\Models\Crawler as CrawlerModel;
 use Spatie\Crawler\CrawlProfiles\CrawlInternalUrls;
+
 
 class LinkController extends Controller
 {
@@ -17,10 +19,12 @@ class LinkController extends Controller
 
     public function store(Request $request){
         $url = $request->url;
-        $items = Crawler::create()
+        Crawler::create()
         ->ignoreRobots()
         ->setCrawlObserver(new Observer)
-        ->startCrawling($url)->get();
+        ->startCrawling($url);
+        $items = CrawlerModel::where('source', $url)->get();
+        //dd($url, $items);
 
 
         return view('home')->with('items', $items);

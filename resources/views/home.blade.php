@@ -18,19 +18,28 @@
             body {
                 font-family: 'Nunito', sans-serif;
             }
+            .crawler{
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #5c77ff;
+                flex-direction: column;
+            }
         </style>
     </head>
-    <body>
-            <div class="crawler">
-            <form method="POST" action="{{ route('crawler.store') }}">
-            @csrf
-                <input type="text" name = "url" />
-                <button type="submit">Crawl Url</button>
-            </form>
-            </div>
+    <body class="crawler">
+            <section class="form">
+                <h1 class="crawler__heading">URL Crawler</h1>
+                <form method="POST" action="{{ route('crawler.store') }}">
+                @csrf
+                    <input type="text" name = "url" placeholder="Type url..." />
+                    <button type="submit">Start Crawling</button>
+                </form>
+            </section>
 
 
-            <table class="table table-dark">
+            <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">#</th>

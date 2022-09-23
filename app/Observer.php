@@ -36,9 +36,9 @@ class Observer extends CrawlObserver
     ): void {
         // Create records
         $crawl = Crawler::updateOrCreate([
-            'url' => $url
-        ], [
-            'status' => $response->getStatusCode()
+            'url' => $url,
+            'status' => $response->getStatusCode(),
+            'source' => isset($foundOnUrl) ? 'https://'.$foundOnUrl->getHost().'/' : null,
         ]);
     }
 
