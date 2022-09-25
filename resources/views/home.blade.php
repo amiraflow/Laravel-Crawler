@@ -4,10 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
-
-        <!-- Fonts -->
-        <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+        <title>URL Crawler</title>
 
         <!-- Styles -->
         <style>
@@ -16,48 +13,138 @@
 
         <style>
             body {
-                font-family: 'Nunito', sans-serif;
+                font-family: 'Helvetica', sans-serif;
             }
             .crawler{
-                height: 100vh;
+                min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: #5c77ff;
+                background: #85183a;
                 flex-direction: column;
             }
+            .search__input-container{
+                min-height: 60px;
+                background: transparent;
+                border: 0;
+                background: #fff;
+                display: block;
+                width: 100%;
+                padding: 10px 60px 10px 20px;
+                color: #666;
+                border-radius: 34px;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            .search__form{
+                display: flex;
+            }
+            .search__input{
+                font-size: 16px;
+                color: #333;
+                background-color: transparent;
+            }
+            .search__submit{
+                border-radius: 34px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                background-color: #fff;
+            }
+            .crawler__heading{
+                font-size: 36px;
+                color: #fff;
+                font-weight: 700;
+                text-align: center;
+                margin-bottom: 50px;
+                text-transform: uppercase;
+            }
+            .results__internal{
+                background-color: #fff;
+                padding: 20px;
+                display: none;
+            }
+            .results__single{
+                display: flex;
+    justify-content: space-between;
+            }
+            .results__description{
+                background: #fff;
+    padding: 20px;
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+            }
+            .results__show{
+                display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: 37px;
+    margin-top: 20px;
+            }
+            .results__text{
+                font-size: 20px;
+    padding: 20px;
+            }
+            .results__show:after {
+                display: block;
+                content: "";
+                min-width: 60px;
+                min-height: 40px;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-image: url(./img/icons/down-arrow.png);
+            }
+            .results__image{
+                width: 100px;
+                object-fit: contain;
+            }
+            .results__paragraph{
+                max-width: 500px;
+            }
+
         </style>
     </head>
+
     <body class="crawler">
-            <section class="form">
-                <h1 class="crawler__heading">URL Crawler</h1>
-                <form method="POST" action="{{ route('crawler.store') }}">
+            <h1 class="crawler__heading">URL Crawler</h1>
+            <section class="search">
+                <form class="search__form" method="POST" action="{{ route('crawler.store') }}">
                 @csrf
-                    <input type="text" name = "url" placeholder="Type url..." />
-                    <button type="submit">Start Crawling</button>
+                <div class="search__input-container">
+                    <input class="search__input" type="text" name = "url" placeholder="Type any url to crawl it..." />
+                </div> 
+                <button class="search__submit" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                    </svg>
+                </button>
                 </form>
             </section>
 
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">URL</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Path</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($items as $idx => $item)
-                        <tr>
-                            <th scope="row">{{ $idx + 1 }}</th>
-                            <td>{{ $item->url }}</td>
-                            <td>{{ $item->status }}</td>
-                            <td><a href="{{url($item->path ? $item->path : '')}}">{{ $item->path ? $item->path : '' }}</a></td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <section class="results">
+                <div class="results__description">
+                    <img class="results__image" src="{{url('/img/web-crawler.png')}}"/>
+                    <p class="results__paragraph">You have found 238 links on www.example.com. 56 of those are internal, 99 are external.</p></div>
+                <div class="results__show results__show--internal">
+                    <div class="results__text">Show internal results</div>
+                </div>
+                <div class="results__internal">
+                @foreach ($items as $idx => $item)
+                    <div class="results__single">
+                        <div class="results__url"><a class="results__link" href="{{ $item->url }}">{{ $item->url }}</a></div>
+                        <div class="results__status">{{ $item->status }}</div>
+                    </div>
+                @endforeach
+                </div>
+                <div class="results__show results__show--external">
+                    <div class="results__text">Show external results</div>
+                </div>
+                
+                <div class="results__external"></div>
+            </section>
     </body>
 </html>
