@@ -9,6 +9,7 @@ use GuzzleHttp\RequestOptions;
 use App\Http\Controllers\Controller;
 use App\Models\Crawler as CrawlerModel;
 use Spatie\Crawler\CrawlProfiles\CrawlInternalUrls;
+use Illuminate\Support\Str;
 
 
 class LinkController extends Controller
@@ -19,15 +20,30 @@ class LinkController extends Controller
 
     public function store(Request $request){
         $url = $request->url;
-        Crawler::create()
-        ->ignoreRobots()
-        ->setCrawlObserver(new Observer)
-        ->startCrawling($url);
-        $items = CrawlerModel::where('source', $url)->get();
-        //dd($url, $items);
+        $items = CrawlerModel::where('source', $url)->orderBy('url')->get();
+        if(!is_null($items)){
+            Crawler::create()
+            ->ignoreRobots()
+            ->setCrawlObserver(new Observer)
+            ->startCrawling($url);
+            $items = CrawlerModel::where('source', $url)->orderBy('url')->get();
+        }
 
+        $cleanUrl = preg_replace('/\s+/','', $url);
+        $cleanUrl = str_replace('https://','', $cleanUrl); 
+        $cleanUrl = str_replace('http://','', $cleanUrl); 
+        $cleanUrl = str_replace('www.','', $cleanUrl); 
 
-        return view('home')->with('items', $items);
+        $internalItems = [];
+        $internalItems = $items->filter(function ($value, $key) use ($cleanUrl) {
+            return Str::contains($value->url, $cleanUrl);
+        })->all();
+
+        $externalItems = $items->filter(function ($value, $key) use ($cleanUrl) {
+            return !Str::contains($value->url, $cleanUrl);
+        })->all();
+
+        return view('home', compact('items', 'internalItems', 'externalItems'));
 
     }
 }

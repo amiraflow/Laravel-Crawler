@@ -32,7 +32,6 @@
                 width: 100%;
                 padding: 10px 60px 10px 20px;
                 color: #666;
-                border-radius: 34px;
                 display: -ms-flexbox;
                 display: flex;
                 -ms-flex-align: center;
@@ -49,7 +48,6 @@
                 background-color: transparent;
             }
             .search__submit{
-                border-radius: 34px;
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
                 background-color: #fff;
@@ -62,10 +60,11 @@
                 margin-bottom: 50px;
                 text-transform: uppercase;
             }
-            .results__internal{
+            .results__wrap{
                 background-color: #fff;
                 padding: 20px;
                 display: none;
+                transition:all 0.5s ease;
             }
             .results__single{
                 display: flex;
@@ -82,8 +81,8 @@
                 display: flex;
     justify-content: space-between;
     background-color: #fff;
-    border-radius: 37px;
     margin-top: 20px;
+    transition:all 0.5s ease;
             }
             .results__text{
                 font-size: 20px;
@@ -97,6 +96,7 @@
                 background-repeat: no-repeat;
                 background-position: center;
                 background-image: url(./img/icons/down-arrow.png);
+                transition:all 0.5s ease;
             }
             .results__image{
                 width: 100px;
@@ -104,6 +104,12 @@
             }
             .results__paragraph{
                 max-width: 500px;
+            }
+            .results--active .results__wrap{
+                display: block;
+            }
+            .results--active .results__show:after{
+                transform: rotate(180deg);
             }
 
         </style>
@@ -128,23 +134,50 @@
             <section class="results">
                 <div class="results__description">
                     <img class="results__image" src="{{url('/img/web-crawler.png')}}"/>
-                    <p class="results__paragraph">You have found 238 links on www.example.com. 56 of those are internal, 99 are external.</p></div>
-                <div class="results__show results__show--internal">
-                    <div class="results__text">Show internal results</div>
+                    <p class="results__paragraph">You have found 238 links on www.example.com. 56 of those are internal, 99 are external.</p>
                 </div>
                 <div class="results__internal">
-                @foreach ($items as $idx => $item)
-                    <div class="results__single">
-                        <div class="results__url"><a class="results__link" href="{{ $item->url }}">{{ $item->url }}</a></div>
-                        <div class="results__status">{{ $item->status }}</div>
+                    <div class="results__show results__show--internal">
+                        <div class="results__text">Show internal results</div>
                     </div>
-                @endforeach
+                    <div class="results__wrap results__wrap--internal">
+                        @if(isset($internalItems))
+                            @foreach ($internalItems as $idx => $item)
+                                <div class="results__single">
+                                    <div class="results__url"><a class="results__link" href="{{ $item->url }}">{{ $item->url }}</a></div>
+                                    <div class="results__status">{{ $item->status }}</div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
-                <div class="results__show results__show--external">
-                    <div class="results__text">Show external results</div>
+                <div class="results__external">
+                    <div class="results__show results__show--external">
+                        <div class="results__text">Show external results</div>
+                    </div>
+                    <div class="results__wrap results__wrap--external">
+                        @if(isset($externalItems))
+                        @foreach ($externalItems as $idx => $item)
+                            <div class="results__single">
+                                <div class="results__url"><a class="results__link" href="{{ $item->url }}">{{ $item->url }}</a></div>
+                                <div class="results__status">{{ $item->status }}</div>
+                            </div>
+                        @endforeach
+                        @endif
+                    </div>
                 </div>
-                
-                <div class="results__external"></div>
             </section>
     </body>
+
+    <script>
+        let showResults  = document.querySelectorAll('.results__show');
+
+showResults.forEach(function(item){
+    item.addEventListener('click', function(){
+        item.parentElement.classList.toggle('results--active');
+        // .querySelector('.results__wrap').classList.toggle('d-none');
+        // item.parentElement.querySelector('.results__show').classList.toggle('d-none');
+    });
+});
+    </script>
 </html>
