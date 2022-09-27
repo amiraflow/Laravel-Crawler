@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 class LinkController extends Controller
 {
     public function get(){
-        return view('home')->with('items', []);
+        return view('home')->with(['internalItems' => null, 'externalItems' => null ]);
     }
 
     public function store(Request $request){
@@ -34,7 +34,6 @@ class LinkController extends Controller
         $cleanUrl = str_replace('http://','', $cleanUrl); 
         $cleanUrl = str_replace('www.','', $cleanUrl); 
 
-        $internalItems = [];
         $internalItems = $items->filter(function ($value, $key) use ($cleanUrl) {
             return Str::contains($value->url, $cleanUrl);
         })->all();
@@ -43,7 +42,7 @@ class LinkController extends Controller
             return !Str::contains($value->url, $cleanUrl);
         })->all();
 
-        return view('home', compact('items', 'internalItems', 'externalItems'));
+        return view('home')->with(['url' => $url, 'internalItems' => $internalItems, 'externalItems' => $externalItems ]);
 
     }
 }

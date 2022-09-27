@@ -111,17 +111,71 @@
             .results--active .results__show:after{
                 transform: rotate(180deg);
             }
+            .results__link{
+                overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+            }
+
+
+@media (min-width: 1400px){
+    .container {
+    max-width: 1320px;
+    }
+}
+@media (min-width: 1200px){
+    .container {
+    max-width: 1140px;
+    }
+}
+@media (min-width: 992px){
+    .container {
+    max-width: 960px;
+}
+}
+@media (min-width: 768px){
+    .container {
+    max-width: 720px;
+}
+}
+@media (min-width: 576px){
+    .container {
+    max-width: 540px;
+}
+}
+
+.container {
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
 
         </style>
     </head>
 
     <body class="crawler">
+    <div class="container">
             <h1 class="crawler__heading">URL Crawler</h1>
             <section class="search">
                 <form class="search__form" method="POST" action="{{ route('crawler.store') }}">
                 @csrf
                 <div class="search__input-container">
-                    <input class="search__input" type="text" name = "url" placeholder="Type any url to crawl it..." />
+                    <input class="search__input" type="text" name="url" value="{{ isset($url) ? $url : '' }}" placeholder="Type any url to crawl it..." />
                 </div> 
                 <button class="search__submit" type="submit">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -134,7 +188,11 @@
             <section class="results">
                 <div class="results__description">
                     <img class="results__image" src="{{url('/img/web-crawler.png')}}"/>
-                    <p class="results__paragraph">You have found 238 links on www.example.com. 56 of those are internal, 99 are external.</p>
+                    @if(isset($internalItems) && isset($externalItems))
+                    <p class="results__paragraph">You have found {{count($internalItems) + count($externalItems)}} links on {{ $url }}. {{count($internalItems)}} of those are internal, {{count($externalItems)}} are external.</p>
+                    @else
+                    <p class="results__paragraph">Crawler is an application that is able to search any URL and list all links on a page.</p>
+                    @endif
                 </div>
                 <div class="results__internal">
                     <div class="results__show results__show--internal">
@@ -167,6 +225,7 @@
                     </div>
                 </div>
             </section>
+            </div>
     </body>
 
     <script>
