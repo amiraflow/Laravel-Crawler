@@ -5,11 +5,6 @@ let showResults  = document.querySelectorAll('.results__show');
 
 showResults.forEach(function(item){
     item.addEventListener('click', function(){
-        alert('tu');
+        item.parentElement.classList.toggle('results--active');
     });
 });
-// let results__wrap    = document.querySelector('.dw_rabats_quick_add_form');
-
-// quickAddButton.addEventListener('click', function(){
-//     quickAddForm.classList.toggle('dw_quick_add_from_active');
-// });

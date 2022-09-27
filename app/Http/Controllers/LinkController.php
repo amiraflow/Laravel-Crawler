@@ -19,12 +19,17 @@ class LinkController extends Controller
     }
 
     public function store(Request $request){
+        $request->validate([
+            'url' => 'required|url'
+        ]);
+    
         $url = $request->url;
         $items = CrawlerModel::where('source', $url)->orderBy('url')->get();
         if(!is_null($items)){
             Crawler::create()
             ->ignoreRobots()
             ->setCrawlObserver(new Observer)
+            ->setDelayBetweenRequests(500)
             ->startCrawling($url);
             $items = CrawlerModel::where('source', $url)->orderBy('url')->get();
         }
